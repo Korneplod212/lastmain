@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Результаты поиска</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #007bff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        form {
+            display: inline;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+  <h1>Результаты поиска</h1>
+  <ul>
+    {% for book in books %}
+      <li>
+        <strong>Название:</strong> {{ book.title }}<br>
+        <strong>Автор:</strong> {{ book.author }}<br>
+        <strong>Жанр:</strong> {{ book.genre }}<br>
+        <strong>Год:</strong> {{ book.year }}<br>
+        <strong>Состояние:</strong> {{ book.condition }}<br>
+        <strong>Рейтинг:</strong> {{ book.rating }}<br>
+        <form action="/request_book" method="post">
+          <input type="hidden" name="book_id" value="{{ book.id }}">
+          <input type="hidden" name="user_id" value="{{ request.cookies.get('user_id') }}">
+          <button type="submit">Запросить книгу</button>
+        </form>
+        <ul>
+          {% for user in users_with_books %}
+            {% if user.id == book.owner_id %}
+              <li>{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

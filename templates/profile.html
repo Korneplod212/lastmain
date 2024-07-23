@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профиль</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #007bff;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            color: #007bff;
+        }
+        p {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .requests li {
+            margin-bottom: 15px;
+        }
+        .requests form {
+            display: inline;
+        }
+        .requests button {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 10px;
+        }
+        .requests button:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Профиль</h1>
+    <p>Имя: {{ user.first_name }}</p>
+    <p>Фамилия: {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Адрес: {{ user.address }}</p>
+
+    <h2>Мои книги</h2>
+    <ul style="text-align: center;">
+    {% for book in books %}
+    <li style="display: block;">{{ book.title }} от {{ book.author }}</li>
+    {% endfor %}
+</ul>
+
+    <h2>Добавить книгу</h2>
+    <form action="/profile/{{ user.id }}/add_book" method="post">
+        <label for="title">Название:</label>
+        <input type="text" id="title" name="title" required><br>
+        <label for="author">Автор:</label>
+        <input type="text" id="author" name="author" required><br>
+        <label for="genre">Жанр:</label>
+        <input type="text" id="genre" name="genre"><br>
+        <label for="year">Год:</label>
+        <input type="number" id="year" name="year"><br>
+        <label for="condition">Состояние:</label>
+        <input type="text" id="condition" name="condition"><br>
+        <input type="hidden" id="owner_id" name="owner_id" value="{{ user.id }}">
+        <input type="submit" value="Добавить книгу">
+    </form>
+
+    <h2>Поиск книг</h2>
+    <form action="/profile/{{ user.id }}/search_books" method="post">
+        <label for="query">Поиск:</label>
+        <input type="text" id="query" name="query"><br>
+        <input type="submit" value="Найти">
+    </form>
+
+    <h2>Запросы на обмен книгами</h2>
+    <ul class="requests" style="text-align: center;">
+    {% for exchange in exchanges %}
+    <li style="display: block;">
+        {{ exchange.book_to_send.title }} от {{ exchange.book_to_send.author }}
+        {% if exchange.book_to_send.owner_id == user.id and exchange.status == 'pending' %}
+        <form action="/accept_exchange" method="post" style="display: inline;">
+            <input type="hidden" name="exchange_id" value="{{ exchange.id }}">
+            <button type="submit">Принять</button>
+        </form>
+        <form action="/decline_exchange" method="post" style="display: inline;">
+            <input type="hidden" name="exchange_id" value="{{ exchange.id }}">
+            <button type="submit">Отклонить</button>
+        </form>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
