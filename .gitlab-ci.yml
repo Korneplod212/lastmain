@@ -1,0 +1,18 @@
+image: docker:latest
+services:
+  - docker:dind
+
+
+stages:
+  - build
+  - test
+
+building_app:
+  stage: build
+  script: 
+    - docker build . --tag test_build
+  
+testing_app:
+  stage: test
+  script:
+    - echo "Testing the app..."
